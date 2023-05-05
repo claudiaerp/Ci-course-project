@@ -1,7 +1,6 @@
 package suite1;
 
 import org.testng.annotations.Test;
-
 import suite2.SauceDemoTests;
 
 import org.testng.AssertJUnit;
@@ -9,12 +8,18 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+import org.testng.annotations.BeforeSuite;
+
+import java.util.Arrays;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class OpenCartTests {
 
@@ -26,7 +31,6 @@ public class OpenCartTests {
 	String searchField = "//*[@id='search']/input";
 	String result = "//*[@id=\"content\"]/div[3]/div/div/div[1]/a/img";
 	String query = "Macbook Air";
-
 
 	//Test to launch browser with url
 	@Test
@@ -57,13 +61,17 @@ public class OpenCartTests {
 
 	}
 
-
+	 @BeforeSuite
+	 public static void setUp() {
+	    WebDriverManager.chromedriver().avoidResolutionCache().setup();
+	 }
+	
 	//Before test
 	@BeforeTest
 	public void beforeTest() {
 
 		//Instantiate browser based on user input
-
+		System.out.println(browser);
 		if(browser != "" && browser != null) {
 			if(browser.equalsIgnoreCase("Chrome")) {
 				driver = new ChromeDriver();
@@ -82,8 +90,9 @@ public class OpenCartTests {
 		}
 		else {
 			browser = "Chrome";
-			driver = new ChromeDriver();
-			driver.manage().window().maximize();
+			ChromeOptions optionsChrome = new ChromeOptions();
+	        optionsChrome.addArguments("start-maximized");
+	        driver = new ChromeDriver(optionsChrome);
 		}
 	}	
 
@@ -91,7 +100,5 @@ public class OpenCartTests {
 	@AfterTest
 	public void afterTest() {
 		driver.quit();			
-	}	
-
-
+	}
 }

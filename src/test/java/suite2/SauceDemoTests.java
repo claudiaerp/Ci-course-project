@@ -4,15 +4,19 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import org.openqa.selenium.JavascriptExecutor;
 import org.testng.Assert;
+import io.github.bonigarcia.wdm.WebDriverManager;
+
 
 
 public class SauceDemoTests {
@@ -58,11 +62,16 @@ public class SauceDemoTests {
 	public void login() {
 		driver.findElement(By.id("user-name")).sendKeys("standard_user");
 		driver.findElement(By.id("password")).sendKeys("secret_sauce");
-		driver.findElement(By.className("btn_action")).click();
-		AssertJUnit.assertTrue(driver.findElement(By.className("product_label")).getText()
+		driver.findElement(By.id("login-button")).click();
+		AssertJUnit.assertTrue(driver.findElement(By.className("title")).getText()
 				.equals("Products"));
 	}
-
+	
+	@BeforeSuite
+	 public static void setUp() {
+	    WebDriverManager.chromedriver().avoidResolutionCache().setup();
+	 }
+	
 	//Before test
 	@BeforeTest
 	public void beforeTest() {
@@ -87,8 +96,9 @@ public class SauceDemoTests {
 		}
 		else {
 			browser = "Chrome";
-			driver = new ChromeDriver();
-			driver.manage().window().maximize();
+			ChromeOptions optionsChrome = new ChromeOptions();
+	        optionsChrome.addArguments("start-maximized");
+	        driver = new ChromeDriver(optionsChrome);
 		}
 	}	
 	//hooks - to tear down after test is executed
